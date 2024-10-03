@@ -42,10 +42,7 @@ class SocketCom
 public:
     int32 glSocketDescriptor = 0;
     int32 glClientSocket = 0;
-    bool blStatus = false;
-    bool blReadStatus = false;
     uint8 pucRecieveBuffer[REC_MSG_BUF_LEN] = {0};
-    bool blMesState = false;
     // Structure to represent the address
     struct sockaddr_in stServerAddress = {0};
 
