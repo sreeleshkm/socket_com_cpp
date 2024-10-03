@@ -1,19 +1,27 @@
-//********************** Socket communication ************************
+//*************************** Socket communication ****************************
 // Copyright (c) 2024 Trenser Technology Solutions (P) Ltd.
 // All Rights Reserved
 //*****************************************************************************
 //
-// File     : main.c
-// Summary  : Main file of the server communication
+// File     : socket_common.cpp
+// Summary  : This file includes the common functionalities of the server and 
+//            client
 // Note     : Nil
 // Author   : Sreelesh KM
-// Date     : 20/09/2024
+// Date     : 03/10/2024
 //
 //*****************************************************************************
 
 //******************************* Include Files *******************************
 #include "socket_common.h"
 
+//****************************** createSocket *********************************
+//Purpose : Create socket
+//Inputs  : Nil
+//Outputs : Nil
+//Return  : Return socket creation state
+//Notes   : Nil
+//*****************************************************************************
 bool SocketCom::createSocket(void)
 {
     bool blStatus = true;
@@ -28,7 +36,14 @@ bool SocketCom::createSocket(void)
     return blStatus;
 }
 
-bool SocketCom::BindSocket(void)
+//******************************* bindSocket **********************************
+//Purpose : Assign an address to the socket
+//Inputs  : Nil
+//Outputs : Nil
+//Return  : Return the status of the binding state
+//Notes   : Nil
+//*****************************************************************************
+bool SocketCom::bindSocket(void)
 {
     bool blStatus = true;
     int8 cBindState = 0;
@@ -55,31 +70,11 @@ bool SocketCom::BindSocket(void)
     return blStatus;
 }
 
-void SocketCom::setSocketDescriptor(uint32 ulSctDes)
-{
-    glSocketDescriptor = ulSctDes;
-}
-
-uint32 SocketCom::getSocketDescriptor(void)
-{
-    return glSocketDescriptor;
-}
-
-void SocketCom::setClientSocket(uint32 ulCliSct)
-{
-    glClientSocket = ulCliSct;
-}
-
-uint32 SocketCom::getClientSocket(void)
-{
-    return glClientSocket;
-}
-
 //******************************** readMessage ********************************
 //Purpose : Read message from the socket
 //Inputs  : lSocket
 //Outputs : Nil
-//Return  : Return read message status
+//Return  : Return the read message status
 //Notes   : Nil
 //*****************************************************************************
 bool SocketCom::readMessage(int32 lSocket)
@@ -99,10 +94,10 @@ bool SocketCom::readMessage(int32 lSocket)
 }
 
 //******************************** sendMessage ********************************
-//Purpose : Send message to the client
-//Inputs  : pucMessage
+//Purpose : Send message to the socket
+//Inputs  : lSocket, pucMessage
 //Outputs : Nil
-//Return  : Return send message status
+//Return  : Return the send message status
 //Notes   : Nil
 //*****************************************************************************
 bool SocketCom::sendMessage(int32 lSocket, uint8* pucMessage)

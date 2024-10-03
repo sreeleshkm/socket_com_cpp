@@ -24,16 +24,17 @@
 #include "types.h"
 
 //***************************** Global Constants *******************************
-#define SOC_CLI 0
-#define SOC_SER 1
+#define SOC_CLI                 (0)
+#define SOC_SER                 (1)
 #define CONNECTION_PORT         (3500)
 #define NULL_CHARACTER          ('\0')
 #define REC_MSG_BUF_LEN         (200)
 #define SEND_MES_TIME_DIF       (5)
 
-//********************************.CLASS_HEADER.*******************************
-// Description : 
-// Usage       : 
+//******************************** SocketCom **********************************
+// Description : Includes the common functions and variable of the socket
+//               communication
+// Usage       : This is the base class of the server and client derived class.
 // Note        : Nil
 //*****************************************************************************
 class SocketCom
@@ -49,11 +50,7 @@ public:
     struct sockaddr_in stServerAddress = {0};
 
     bool createSocket(void);
-    bool BindSocket(void);
-    void setSocketDescriptor(uint32 ulSctDes);
-    uint32 getSocketDescriptor(void);
-    void setClientSocket(uint32 ulCliSct);
-    uint32 getClientSocket(void);
+    bool bindSocket(void);
     bool readMessage(int32 lSocket);
     bool sendMessage(int32 lSocket, uint8* pucMessage);
 };

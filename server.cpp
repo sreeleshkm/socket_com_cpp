@@ -1,29 +1,30 @@
-//********************** Socket communication *********************************
+//*************************** Socket communication ****************************
 // Copyright (c) 2024 Trenser Technology Solutions (P) Ltd.
 // All Rights Reserved
 //*****************************************************************************
 //
-// File     : main.c
-// Summary  : Main file of the server communication
+// File     : server.cpp
+// Summary  : This file includes the client functionalities of the socket
 // Note     : Nil
 // Author   : Sreelesh KM
-// Date     : 20/09/2024
+// Date     : 03/10/2024
 //
 //*****************************************************************************
 
 //******************************* Include Files *******************************
 #include "server.h"
 
+//******************************* Local Types *********************************
 using namespace std;
 
-//****************************** startClientCon *******************************
+//***************************** startConnection *******************************
 //Purpose : Open the client socket communication
 //Inputs  : Nil
 //Outputs : Nil
-//Return  : Return socket connection state
+//Return  : Return socket creation state
 //Notes   : Nil
 //*****************************************************************************
-bool ServerCom::serverStartCon(void)
+bool ServerCom::startConnection(void)
 {
     bool blConState = false;
     // Structure to represent the address
@@ -39,7 +40,7 @@ bool ServerCom::serverStartCon(void)
 
         if (blConState == true)
         {
-            blConState = BindSocket();
+            blConState = bindSocket();
 
             if (blConState == true)
             {
@@ -81,6 +82,13 @@ bool ServerCom::serverStartCon(void)
     return blConState;
 }
 
+//******************************** setOption **********************************
+//Purpose : Socket options control the behaviour of the socket.
+//Inputs  : Nil
+//Outputs : Nil
+//Return  : Return status of the option setting.
+//Notes   : Nil
+//*****************************************************************************
 bool ServerCom::setOption(void)
 {
     bool blStatus = true;
@@ -101,6 +109,13 @@ bool ServerCom::setOption(void)
     return blStatus;
 }
 
+//****************************** listenSocket *********************************
+//Purpose : Listen for connections from the client.
+//Inputs  : Nil
+//Outputs : Nil
+//Return  : Return status of the socket listening
+//Notes   : Nil
+//*****************************************************************************
 bool ServerCom::listenSocket(void)
 {
     bool blStatus = true;
@@ -118,6 +133,13 @@ bool ServerCom::listenSocket(void)
     return blStatus;
 }
 
+//**************************** acceptConnection *******************************
+//Purpose : Accept the connection signal from the client
+//Inputs  : Nil
+//Outputs : Nil
+//Return  : Return status of the socket connection
+//Notes   : Nil
+//*****************************************************************************
 bool ServerCom::acceptConnection(void)
 {
     bool blStatus = true;
@@ -129,7 +151,7 @@ bool ServerCom::acceptConnection(void)
     glClientSocket = accept(glSocketDescriptor, 
                     (struct sockaddr*)&stServerAddress, &ulLenOfAddress);
 
-    // Check if the socket is listening successfully
+    // Check if the server is accepting the signals from the client
     if(glClientSocket < 0)
     {
         blStatus = false;

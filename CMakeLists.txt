@@ -1,12 +1,9 @@
 cmake_minimum_required(VERSION 3.0)
 
-project(CPP_EG)
+project(SOCKET_COMMUNICATION_CPP)
 
 set(CMAKE_CXX_FLAGS_DEBUG -g)
 # set(CMAKE_CXX_COMPILER g++)
-
-# set (SOURCE main.cpp client.cpp)
-# add_executable(output ${SOURCE})
 
 set (SOC_CLIENT 0)
 set (SOC_SERVER 1)

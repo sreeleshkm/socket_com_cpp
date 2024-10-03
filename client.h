@@ -1,4 +1,4 @@
-//********************** Socket communication - Client ************************
+//*************************** Socket communication ****************************
 // Copyright (c) 2024 Trenser Technology Solutions (P) Ltd.
 // All Rights Reserved
 //*****************************************************************************
@@ -7,7 +7,7 @@
 // Summary  : Includes the function declarations 
 // Note     : Nil
 // Author   : Sreelesh KM
-// Date     : 13/09/2024
+// Date     : 01/10/2024
 //
 //*****************************************************************************
 #ifndef _CLIENT_H_
@@ -19,19 +19,24 @@
 #include "socket_common.h"
 #include "types.h"
 
-// 
+//******************************** ClientCom **********************************
+// Description : Derived class from the SocketCom it includes the 
+//               functionalities of the client side socket communication.
+// Usage       : It includes the functionalities of the client side 
+//               socket communication.
+// Note        : Nil
+//*****************************************************************************
 class ClientCom : public SocketCom
 {
 public:
-    bool checkTime(void);
-    bool clientStartCon(void);
+    bool exceedTime(uint32 lTimeDif);
+    bool startConnection(void);
     bool connectToSocket(void);
 
 private:
     uint32 ulPrevTime = 0;
-    uint32 exceedTime(uint32 lTimeDif);
 };
 
-#endif // _CLIENT_H_ 
+#endif // _CLIENT_H_
 
 // EOF

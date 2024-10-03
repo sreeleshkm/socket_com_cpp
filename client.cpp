@@ -1,25 +1,32 @@
-//********************** Socket communication *********************************
+//*************************** Socket communication ****************************
 // Copyright (c) 2024 Trenser Technology Solutions (P) Ltd.
 // All Rights Reserved
 //*****************************************************************************
 //
-// File     : main.c
-// Summary  : Main file of the server communication
+// File     : client.cpp
+// Summary  : This file includes the client functionalities of the socket
 // Note     : Nil
 // Author   : Sreelesh KM
-// Date     : 20/09/2024
+// Date     : 01/10/2024
 //
 //*****************************************************************************
 
 //******************************* Include Files *******************************
 #include "client.h"
 
+//******************************* Local Types *********************************
 using namespace std;
 
-//***************************** Local Constants *******************************
-#define SEND_MES_TIME_DIF   (5)
-
-uint32 ClientCom::exceedTime(uint32 lTimeDif)
+//********************************* exceedTime ********************************
+//Purpose : Checks the current time exceeds the previous time and by a 
+//          specified time difference and updates the previous time 
+//          accordingly.
+//Inputs  : lTimeDif
+//Outputs : Nil
+//Return  : Return the time difference exceeded status.
+//Notes   : Nil
+//*****************************************************************************
+bool ClientCom::exceedTime(uint32 lTimeDif)
 {
     bool blDelayTime = false;
     time_t ulCurTime = 0;
@@ -30,35 +37,20 @@ uint32 ClientCom::exceedTime(uint32 lTimeDif)
     {
         blDelayTime = true;
         ulPrevTime = ulCurTime;
+        cout << "Unix time : " << ulCurTime << endl;
     }
 
     return blDelayTime;
 }
 
-bool ClientCom::checkTime(void)
-{
-    bool blStatus = false;
-
-    blStatus = exceedTime(SEND_MES_TIME_DIF);
-
-    if (blStatus == true)
-    {
-        cout << "Time : " << ulPrevTime << endl;
-    }
-
-    return blStatus;
-}
-
-//////////////////////////////////////////////////
-
-//****************************** startClientCon *******************************
+//***************************** startConnection *******************************
 //Purpose : Open the client socket communication
 //Inputs  : Nil
 //Outputs : Nil
-//Return  : Return socket connection state
+//Return  : Return socket creation state
 //Notes   : Nil
 //*****************************************************************************
-bool ClientCom::clientStartCon(void)
+bool ClientCom::startConnection(void)
 {
     bool blConState = false;
     // Structure to represent the address
@@ -73,7 +65,7 @@ bool ClientCom::clientStartCon(void)
     else
     {
         cout << "Socket created\n";
-        blConState = BindSocket();
+        blConState = bindSocket();
 
         if (blConState == false)
         {
@@ -95,7 +87,7 @@ bool ClientCom::clientStartCon(void)
 
 //****************************** connectToSocket ******************************
 //Purpose : Try to connect to the server
-//Inputs  : pstServerAdd
+//Inputs  : Nil
 //Outputs : Nil
 //Return  : Return socket connection state
 //Notes   : Nil

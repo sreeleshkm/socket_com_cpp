@@ -1,24 +1,36 @@
-//********************** Socket communication ************************
+//*************************** Socket communication ****************************
 // Copyright (c) 2024 Trenser Technology Solutions (P) Ltd.
 // All Rights Reserved
 //*****************************************************************************
 //
-// File     : main.c
+// File     : main.cpp
 // Summary  : Main file of the server communication
 // Note     : Nil
 // Author   : Sreelesh KM
-// Date     : 20/09/2024
+// Date     : 01/10/2024
 //
 //*****************************************************************************
 
 //******************************* Include Files *******************************
 #include <iostream>
 #include "socket_common.h"
-#include "client.h"
-#include "server.h"
 
+#if (SOCKET_COM == SOC_SER)
+#include "server.h"
+#elif (SOCKET_COM == SOC_CLI)
+#include "client.h"
+#endif
+
+//******************************* Local Types *********************************
 using namespace std;
 
+//*********************************** main ************************************
+//Purpose : Socket communication
+//Inputs  : Nil
+//Outputs : Nil
+//Return  : Nil
+//Notes   : Nil
+//*****************************************************************************
 int main()
 {
     cout << "Program Started\n";
@@ -36,9 +48,9 @@ int main()
 #endif
 
 #if (SOCKET_COM == SOC_SER)
-    blStatus = Server.serverStartCon();
+    blStatus = Server.startConnection();
 #elif (SOCKET_COM == SOC_CLI)
-    blStatus = Client.clientStartCon();
+    blStatus = Client.startConnection();
 #endif
 
     if (blStatus == true)
@@ -64,8 +76,9 @@ int main()
                 cout << "Message : " << Client.pucRecieveBuffer << endl;
 #endif
             }
+
 #if (SOCKET_COM == SOC_CLI)
-            blSndMsgStatus = Client.checkTime();
+            blSndMsgStatus = Client.exceedTime(SEND_MES_TIME_DIF);
 
             if (blSndMsgStatus == true)
             {
@@ -77,3 +90,5 @@ int main()
 
     return 0;
 }
+
+// EOF
