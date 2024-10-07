@@ -97,7 +97,7 @@ bool ServerCom::setOption(void)
     uint32 ulOptionValue = 1;
 
     // Set options for the socket
-    lSocOptState = setsockopt(glSocketDescriptor, SOL_SOCKET, SO_REUSEADDR,
+    lSocOptState = setsockopt(getSocketDes(), SOL_SOCKET, SO_REUSEADDR,
                     &ulOptionValue, sizeof(ulOptionValue));
 
     // Check if options are set successfully
@@ -122,7 +122,7 @@ bool ServerCom::listenSocket(void)
     int32 lLisState = 0;
 
     // Listen on specified port with a maximum of 4 requests
-    lLisState = listen(glSocketDescriptor, 4);
+    lLisState = listen(getSocketDes(), 4);
 
     // Check if the socket is listening successfully
     if(lLisState < 0)
@@ -144,15 +144,17 @@ bool ServerCom::acceptConnection(void)
 {
     bool blStatus = true;
     uint32 ulLenOfAddress = 0;
+    int32 lClientSoc = 0;
 
     ulLenOfAddress = sizeof(struct sockaddr);
 
     // Accept connection signals from the client
-    glClientSocket = accept(glSocketDescriptor, 
+    lClientSoc = accept(getSocketDes(), 
                     (struct sockaddr*)&stServerAddress, &ulLenOfAddress);
 
+    setCliSoc(lClientSoc);
     // Check if the server is accepting the signals from the client
-    if(glClientSocket < 0)
+    if(lClientSoc < 0)
     {
         blStatus = false;
     }

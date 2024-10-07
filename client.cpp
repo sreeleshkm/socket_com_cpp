@@ -99,7 +99,7 @@ bool ClientCom::connectToSocket(void)
     int32 lConState = 0;
 
     // Connect to the server
-    lConState = connect(glSocketDescriptor,
+    lConState = connect(getSocketDes(),
                         (struct sockaddr*)& stServerAddress,
                         sizeof(struct sockaddr));
 

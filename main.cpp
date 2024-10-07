@@ -58,15 +58,15 @@ int main()
         while (true)
         {
 #if (SOCKET_COM == SOC_SER)
-            blRcvMsgStatus = Server.readMessage(Server.glClientSocket);
+            blRcvMsgStatus = Server.readMessage(Server.getCliSoc());
 #elif (SOCKET_COM == SOC_CLI)
-            blRcvMsgStatus = Client.readMessage(Client.glSocketDescriptor);
+            blRcvMsgStatus = Client.readMessage(Client.getSocketDes());
 #endif
             if (blRcvMsgStatus == true)
             {
 #if (SOCKET_COM == SOC_SER)
                 cout << "Message : " << Server.pucRecieveBuffer << endl;
-                blMesState = Server.sendMessage(Server.glClientSocket, pucMessage);
+                blMesState = Server.sendMessage(Server.getCliSoc(), pucMessage);
             
                 if (blMesState == false)
                 {
@@ -82,7 +82,7 @@ int main()
 
             if (blSndMsgStatus == true)
             {
-                Client.sendMessage(Client.glSocketDescriptor, pucMessage);
+                Client.sendMessage(Client.getSocketDes(), pucMessage);
             }
 #endif
         }
