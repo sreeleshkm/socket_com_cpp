@@ -29,7 +29,9 @@ class ServerCom : public SocketCom
 {
 public:
     bool startConnection(void);
-    bool setOption(void);
+
+// private:
+    bool setOption(int32 lSocDes);
     bool listenSocket(void);
     bool acceptConnection(void);
 };

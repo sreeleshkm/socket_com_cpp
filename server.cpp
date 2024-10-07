@@ -36,7 +36,7 @@ bool ServerCom::startConnection(void)
     {
         cout << "Socket created\n";
 
-        blConState = setOption();
+        blConState = setOption(getSocketDes());
 
         if (blConState == true)
         {
@@ -89,7 +89,7 @@ bool ServerCom::startConnection(void)
 //Return  : Return status of the option setting.
 //Notes   : Nil
 //*****************************************************************************
-bool ServerCom::setOption(void)
+bool ServerCom::setOption(int32 lSocDes)
 {
     bool blStatus = true;
     int32 lSocOptState = 0;
@@ -97,7 +97,7 @@ bool ServerCom::setOption(void)
     uint32 ulOptionValue = 1;
 
     // Set options for the socket
-    lSocOptState = setsockopt(getSocketDes(), SOL_SOCKET, SO_REUSEADDR,
+    lSocOptState = setsockopt(lSocDes, SOL_SOCKET, SO_REUSEADDR,
                     &ulOptionValue, sizeof(ulOptionValue));
 
     // Check if options are set successfully
