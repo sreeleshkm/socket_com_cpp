@@ -27,8 +27,6 @@ using namespace std;
 bool ServerCom::startConnection(void)
 {
     bool blConState = false;
-    // Structure to represent the address
-    struct sockaddr_in stServerAddress = {0};
 
     blConState = createSocket();
 
@@ -111,18 +109,18 @@ bool ServerCom::setOption(int32 lSocDes)
 
 //****************************** listenSocket *********************************
 //Purpose : Listen for connections from the client.
-//Inputs  : Nil
+//Inputs  : lSocDes
 //Outputs : Nil
 //Return  : Return status of the socket listening
 //Notes   : Nil
 //*****************************************************************************
-bool ServerCom::listenSocket(void)
+bool ServerCom::listenSocket(int32 lSocDes)
 {
     bool blStatus = true;
     int32 lLisState = 0;
 
     // Listen on specified port with a maximum of 4 requests
-    lLisState = listen(getSocketDes(), 4);
+    lLisState = listen(lSocDes, 4);
 
     // Check if the socket is listening successfully
     if(lLisState < 0)
@@ -135,12 +133,12 @@ bool ServerCom::listenSocket(void)
 
 //**************************** acceptConnection *******************************
 //Purpose : Accept the connection signal from the client
-//Inputs  : Nil
+//Inputs  : lSocDes
 //Outputs : Nil
 //Return  : Return status of the socket connection
 //Notes   : Nil
 //*****************************************************************************
-bool ServerCom::acceptConnection(void)
+bool ServerCom::acceptConnection(int32 lSocDes)
 {
     bool blStatus = true;
     uint32 ulLenOfAddress = 0;
@@ -149,7 +147,7 @@ bool ServerCom::acceptConnection(void)
     ulLenOfAddress = sizeof(struct sockaddr);
 
     // Accept connection signals from the client
-    lClientSoc = accept(getSocketDes(), 
+    lClientSoc = accept(lSocDes, 
                     (struct sockaddr*)&stServerAddress, &ulLenOfAddress);
 
     setCliSoc(lClientSoc);

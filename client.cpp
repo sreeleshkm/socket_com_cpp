@@ -53,8 +53,6 @@ bool ClientCom::exceedTime(uint32 lTimeDif)
 bool ClientCom::startConnection(void)
 {
     bool blConState = false;
-    // Structure to represent the address
-    struct sockaddr_in stServerAddress = {0};
 
     blConState = createSocket();
 
@@ -73,7 +71,7 @@ bool ClientCom::startConnection(void)
         }
         else
         {
-            blConState = connectToSocket();
+            blConState = connectToSocket(getSocketDes());
 
             if (blConState == false)
             {
@@ -92,14 +90,14 @@ bool ClientCom::startConnection(void)
 //Return  : Return socket connection state
 //Notes   : Nil
 //*****************************************************************************
-bool ClientCom::connectToSocket(void)
+bool ClientCom::connectToSocket(int32 lSocDes)
 // static bool connectToSocket(struct sockaddr_in pstServerAdd)
 {
     bool blStatus = true;
     int32 lConState = 0;
 
     // Connect to the server
-    lConState = connect(getSocketDes(),
+    lConState = connect(lSocDes,
                         (struct sockaddr*)& stServerAddress,
                         sizeof(struct sockaddr));
 

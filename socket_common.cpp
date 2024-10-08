@@ -57,7 +57,7 @@ bool SocketCom::bindSocket(void)
     stServerAddress.sin_zero[8] = NULL_CHARACTER;
 #if (SOCKET_COM == SOC_SER)
     // Bind socket with values address and port from the sockaddr_in structure
-    cBindState = bind(glSocketDescriptor, (struct sockaddr*)&stServerAddress, 
+    cBindState = bind(getSocketDes(), (struct sockaddr*)&stServerAddress, 
                 sizeof(struct sockaddr));
 
     // Check if the binding was successful

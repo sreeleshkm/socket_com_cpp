@@ -31,7 +31,7 @@ class ClientCom : public SocketCom
 public:
     bool exceedTime(uint32 lTimeDif);
     bool startConnection(void);
-    bool connectToSocket(void);
+    bool connectToSocket(int32 lSocDes);
 
 private:
     uint32 ulPrevTime = 0;

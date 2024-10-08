@@ -32,8 +32,8 @@ public:
 
 // private:
     bool setOption(int32 lSocDes);
-    bool listenSocket(void);
-    bool acceptConnection(void);
+    bool listenSocket(int32 lSocDes);
+    bool acceptConnection(int32 lSocDes);
 };
 
 #endif // _SERVER_H_ 
