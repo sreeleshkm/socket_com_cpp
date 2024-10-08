@@ -42,11 +42,11 @@ bool ServerCom::startConnection(void)
 
             if (blConState == true)
             {
-                blConState = listenSocket();
+                blConState = listenSocket(getSocketDes());
 
                 if (blConState == true)
                 {
-                    blConState = acceptConnection();
+                    blConState = acceptConnection(getSocketDes());
 
                     if (blConState == true)
                     {
