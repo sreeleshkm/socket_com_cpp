@@ -25,6 +25,8 @@
 #include <fcntl.h>
 #include "types.h"
 
+// #define SOCKET_COM SOC_SER
+
 //***************************** Global Constants *******************************
 #define SOC_CLI                 (0)
 #define SOC_SER                 (1)
@@ -43,7 +45,8 @@ class SocketCom
 {
 private:
     int32 glSocketDescriptor = 0;
-    int32 glClientSocket = 0;
+    int32 glClientSocket[10] = {0};
+    uint8 ucClientCount = 0;
 
 public:
     uint8 pucRecieveBuffer[REC_MSG_BUF_LEN] = {0};
@@ -52,12 +55,14 @@ public:
 
     bool createSocket(void);
     bool bindSocket(void);
-    bool readMessage(int32 lSocket);
-    bool sendMessage(int32 lSocket, uint8* pucMessage);
+    int32 readMessage(int32* lSocket);
+    // bool readMessage(int32 lSocket, uint8 ucCount);
+    bool sendMessage(int32* lSocket, uint8* pucMessage);
     int32 getSocketDes(void);
     void setSocketDes(int32 SocDes);
-    int32 getCliSoc(void);
+    int32 getCliSoc(uint8 ucCount);
     void setCliSoc(int32 CliSoc);
+    uint8 getClientCount(void);
 };
 
 #endif // _SOCKET_COMMON_H_

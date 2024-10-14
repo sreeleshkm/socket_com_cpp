@@ -42,25 +42,7 @@ bool ServerCom::startConnection(void)
 
             if (blConState == true)
             {
-                blConState = listenSocket(getSocketDes());
-
-                if (blConState == true)
-                {
-                    blConState = acceptConnection(getSocketDes());
-
-                    if (blConState == true)
-                    {
-                        cout << "Server connected to client\n";
-                    }
-                    else
-                    {
-                        cout << "Couldn't establish connection with client\n";
-                    }
-                }
-                else
-                {
-                    cout << "Couldn't listen for connections\n";
-                }
+                cout << "Bind address\n";
             }
             else
             {
@@ -120,7 +102,7 @@ bool ServerCom::listenSocket(int32 lSocDes)
     int32 lLisState = 0;
 
     // Listen on specified port with a maximum of 4 requests
-    lLisState = listen(lSocDes, 4);
+    lLisState = listen(lSocDes, 0);
 
     // Check if the socket is listening successfully
     if(lLisState < 0)
@@ -138,24 +120,88 @@ bool ServerCom::listenSocket(int32 lSocDes)
 //Return  : Return status of the socket connection
 //Notes   : Nil
 //*****************************************************************************
-bool ServerCom::acceptConnection(int32 lSocDes)
+bool ServerCom::acceptConnection(int32 lSocDes, int32* lClientSoc)
 {
     bool blStatus = true;
     uint32 ulLenOfAddress = 0;
-    int32 lClientSoc = 0;
 
     ulLenOfAddress = sizeof(struct sockaddr);
 
     // Accept connection signals from the client
-    lClientSoc = accept(lSocDes, 
-                    (struct sockaddr*)&stServerAddress, &ulLenOfAddress);
+    *lClientSoc = accept(lSocDes, 
+                    (struct sockaddr*)&stServerAddress, &ulLenOfAddress);;
 
-    setCliSoc(lClientSoc);
+    // setCliSoc(lClientSoc);
     // Check if the server is accepting the signals from the client
-    if(lClientSoc < 0)
+    if(*lClientSoc < 0)
     {
         blStatus = false;
     }
 
     return blStatus;
+}
+
+//********************************* establishCon ********************************
+//Purpose : Checks the current time exceeds the previous time and by a 
+//          specified time difference and updates the previous time 
+//          accordingly.
+//Inputs  : lTimeDif
+//Outputs : Nil
+//Return  : Return the time difference exceeded status.
+//Notes   : Nil
+//*****************************************************************************
+bool ServerCom::establishCon()
+{
+    bool blStatus = false;
+    int32 lClientSoc = 0;
+
+    blStatus = listenSocket(getSocketDes());
+
+    if (blStatus == true)
+    {
+        blStatus = false;
+        blStatus = acceptConnection(getSocketDes(), &lClientSoc);
+
+        if (blStatus == true)
+        {
+            setCliSoc(lClientSoc);
+            cout << "Server connected to client\n";
+        }
+        else
+        {
+            cout << "Couldn't establish connection with client\n";
+        }
+    }
+    else
+    {
+        // cout << "Couldn't listen for connections\n";
+    }
+
+    return blStatus;
+}
+
+//********************************* exceedTime ********************************
+//Purpose : Checks the current time exceeds the previous time and by a 
+//          specified time difference and updates the previous time 
+//          accordingly.
+//Inputs  : lTimeDif
+//Outputs : Nil
+//Return  : Return the time difference exceeded status.
+//Notes   : Nil
+//*****************************************************************************
+bool ServerCom::exceedTime(uint32 lTimeDif)
+{
+    bool blDelayTime = false;
+    time_t ulCurTime = 0;
+
+    time(&ulCurTime);
+
+    if ((ulCurTime - ulPrevTime) >= lTimeDif)
+    {
+        blDelayTime = true;
+        ulPrevTime = ulCurTime;
+        // cout << "Unix time : " << ulCurTime << endl;
+    }
+
+    return blDelayTime;
 }

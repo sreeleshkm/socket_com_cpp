@@ -77,20 +77,14 @@ bool SocketCom::bindSocket(void)
 //Return  : Return the read message status
 //Notes   : Nil
 //*****************************************************************************
-bool SocketCom::readMessage(int32 lSocket)
+int32 SocketCom::readMessage(int32* lSocket)
 {
-    bool blStatus = false;
     int32 lRecMsgLen = 0;
 
     // Receive data sent by the client
-    lRecMsgLen = recv(lSocket, pucRecieveBuffer, REC_MSG_BUF_LEN, MSG_DONTWAIT);
+    lRecMsgLen = recv(*lSocket, pucRecieveBuffer, REC_MSG_BUF_LEN, MSG_DONTWAIT);
 
-    if (lRecMsgLen > 0)
-    {
-        blStatus = true;
-    }
-
-    return blStatus;
+    return lRecMsgLen;
 }
 
 //******************************** sendMessage ********************************
@@ -100,7 +94,7 @@ bool SocketCom::readMessage(int32 lSocket)
 //Return  : Return the send message status
 //Notes   : Nil
 //*****************************************************************************
-bool SocketCom::sendMessage(int32 lSocket, uint8* pucMessage)
+bool SocketCom::sendMessage(int32* lSocket, uint8* pucMessage)
 {
     bool blStatus = true;
     uint32 ulTransferMsgLen = 0;
@@ -109,7 +103,7 @@ bool SocketCom::sendMessage(int32 lSocket, uint8* pucMessage)
     ulMsgLen = strlen((const char *)pucMessage);
 
     // Send data to the client
-    ulTransferMsgLen = send(lSocket, pucMessage, ulMsgLen, 0);
+    ulTransferMsgLen = send(*lSocket, pucMessage, ulMsgLen, 0);
 
     if (ulTransferMsgLen != ulMsgLen)
     {
@@ -143,17 +137,16 @@ void SocketCom::setSocketDes(int32 SocDes)
     glSocketDescriptor = SocDes;
 }
 
-
 //******************************** getCliSoc **********************************
 //Purpose : Read the client socket value
-//Inputs  : Nil
+//Inputs  : ucCount
 //Outputs : Nil
 //Return  : Return the client socket value
 //Notes   : Nil
 //*****************************************************************************
-int32 SocketCom::getCliSoc()
+int32 SocketCom::getCliSoc(uint8 ucCount)
 {
-    return glClientSocket;
+    return glClientSocket[ucCount];
 }
 
 //******************************** setClSoc ***********************************
@@ -165,5 +158,21 @@ int32 SocketCom::getCliSoc()
 //*****************************************************************************
 void SocketCom::setCliSoc(int32 CliSoc)
 {
-    glClientSocket = CliSoc;
+    glClientSocket[ucClientCount] = CliSoc;
+    ucClientCount++;
+    // std::cout << "Client count : " << ucClientCount + 48 << std::endl;
 }
+
+//***************************** getClientCount ********************************
+//Purpose : Read the number of client connected
+//Inputs  : ucCount
+//Outputs : Nil
+//Return  : Return the client count
+//Notes   : Nil
+//*****************************************************************************
+uint8 SocketCom::getClientCount()
+{
+    return ucClientCount;
+}
+
+// EOF
