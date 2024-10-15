@@ -16,7 +16,6 @@
 #include <thread>
 #include <vector>
 #include <semaphore>
-#include <mutex>
 #include "socket_common.h"
 
 #if (SOCKET_COM == SOC_SER)
@@ -25,22 +24,22 @@
 #include "client.h"
 #endif
 
-
-//***************************** Local Constants *******************************
-#define CLI_MAX_CNT 10
-
 //******************************* Local Types *********************************
 using namespace std;
 
+//***************************** Local Constants *******************************
+#define CLIENT_MAX_COUNT 20
+
+
+//***************************** Local Variables *******************************
 #if (SOCKET_COM == SOC_SER)
 uint8 ucMessage[10] = {0};
 uint8 ucMsgArCurPos = 0;
 uint8 ucMsgArPrvPos = 0;
-uint8 ulClientCount = 0;
-uint8 ucClientActive[CLI_MAX_CNT] = {0};
+uint8 ucClientCount = 0;
+uint8 ucClientActive[CLIENT_MAX_COUNT] = {0};
 uint8 ulPreClientCount = 0;
 counting_semaphore sem(1);
-mutex mtx;
 #endif
 
 #if (SOCKET_COM == SOC_SER)
@@ -61,40 +60,40 @@ void threadEstCon(ServerCom *Server)
 
         if (blStatus == true)
         {
-            ulClientCount++;
+            ucClientCount++;
         }
     }
 }
 
 //****************************** threadWriteMsg *******************************
 //Purpose : This thread is used to set message buffer
-//Inputs  : ucID, Server
+//Inputs  : ucClientID, Server
 //Outputs : Nil
 //Return  : Nil
 //Notes   : Nil
 //*****************************************************************************
-void threadWriteMsg(uint8 ucID, ServerCom *Server)
+void threadWriteMsg(uint8 ucClientID, ServerCom *Server)
 {
     bool blStatus = false;
 
-    while (ucClientActive[ucID] == 1)
+    while (ucClientActive[ucClientID] == 1)
     {
         blStatus = Server->exceedTime(SEND_MES_TIME_DIF);
 
         if (blStatus == true)
         {
-            // if (sem.try_acquire())
-            // {
-                ucMessage[ucMsgArCurPos] = ucID;
+            if (sem.try_acquire_for(chrono::seconds(1)))
+            {
+                ucMessage[ucMsgArCurPos] = ucClientID;
                 ucMsgArCurPos++;
+
                 if (ucMsgArCurPos == 10)
                 {
                     ucMsgArCurPos = 0;
                 }
-                cout << "set message ID : " << ucID + 48 << endl;
 
-                // sem.release();
-            // }
+                sem.release();
+            }
         }
     }
 
@@ -103,36 +102,33 @@ void threadWriteMsg(uint8 ucID, ServerCom *Server)
 
 //****************************** threadSendMsg ********************************
 //Purpose : This thread is used to send message to the client
-//Inputs  : Nil
+//Inputs  : Server
 //Outputs : Nil
 //Return  : Nil
 //Notes   : Nil
 //*****************************************************************************
 void threadSendMsg(ServerCom *Server)
 {
-    bool blStatus = false;
     int32 socDes = 0;
-    uint8 pucMessage[10] = "clientN\n";
+    uint8 pucMessage[10] = "client  \n";
 
     while (true)
     {
         if (ucMsgArCurPos != ucMsgArPrvPos)
         {
-            // if (sem.try_acquire())
-            // {
-            if (ucClientActive[ucMessage[ucMsgArPrvPos]] == 1)
+            if (sem.try_acquire_for(chrono::seconds(1)))
             {
-                pucMessage[6] = ucMessage[ucMsgArPrvPos] + 48;
-                // cout << "ID : " << ucID + 48 << endl;
-                socDes = Server->getCliSoc(ucMessage[ucMsgArPrvPos]);
-                cout << "Send Message : " << ucMessage[ucMsgArPrvPos] + 48 << " ID " << socDes + 48 << endl;
-                Server->sendMessage(&socDes, pucMessage);
-                // cout << "Send Message" << endl;
-            }
-            //     sem.release();
-            // }
+                if (ucClientActive[ucMessage[ucMsgArPrvPos]] == 1)
+                {
+                    pucMessage[7] = ucMessage[ucMsgArPrvPos] + 48;
+                    socDes = Server->getCliSoc(ucMessage[ucMsgArPrvPos]);
+                    cout << "Send Message : " << ucMessage[ucMsgArPrvPos] + 48 << " ID " << socDes + 48 << endl;
+                    Server->sendMessage(&socDes, pucMessage);
+                }
 
-            ucMsgArPrvPos++;
+                ucMsgArPrvPos++;
+                sem.release();
+            }
 
             if (ucMsgArPrvPos == 10)
             {
@@ -192,7 +188,7 @@ int main()
         while (true)
         {
 #if (SOCKET_COM == SOC_SER)
-            if (ulClientCount != ulPreClientCount)
+            if (ucClientCount != ulPreClientCount)
             {
                 threads.emplace_back(threadWriteMsg, vulThreadClient[ulPreClientCount], &Server);
                 ucClientActive[ulPreClientCount] = 1;   
@@ -202,7 +198,7 @@ int main()
                 vulThreadClient.push_back(ulPreClientCount);
             }
             socDes = Server.getCliSoc(ucRdCount);
-            // cout << "Soc des : " << socDes << endl;
+
             if (ucClientActive[ucRdCount] == 1)
             {
                 blRcvMsgStatus = Server.readMessage(&socDes);
@@ -247,16 +243,17 @@ int main()
             }
 #endif
 
-
+#if 0
 #if (SOCKET_COM == SOC_CLI)
-            // blSndMsgStatus = Client.exceedTime(SEND_MES_TIME_DIF);
+            blSndMsgStatus = Client.exceedTime(SEND_MES_TIME_DIF);
 
-            // if (blSndMsgStatus == true)
-            // {
-            //     socDes = Client.getSocketDes();
-            //     Client.sendMessage(&socDes, pucMessage);
-            //     cout << "Send Message" << endl;
-            // }
+            if (blSndMsgStatus == true)
+            {
+                socDes = Client.getSocketDes();
+                Client.sendMessage(&socDes, pucMessage);
+                cout << "Send Message" << endl;
+            }
+#endif
 #endif
         }
     }

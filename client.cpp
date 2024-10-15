@@ -37,7 +37,7 @@ bool ClientCom::exceedTime(uint32 lTimeDif)
     {
         blDelayTime = true;
         ulPrevTime = ulCurTime;
-        cout << "Unix time : " << ulCurTime << endl;
+        // cout << "Unix time : " << ulCurTime << endl;
     }
 
     return blDelayTime;

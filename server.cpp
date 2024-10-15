@@ -131,7 +131,6 @@ bool ServerCom::acceptConnection(int32 lSocDes, int32* lClientSoc)
     *lClientSoc = accept(lSocDes, 
                     (struct sockaddr*)&stServerAddress, &ulLenOfAddress);;
 
-    // setCliSoc(lClientSoc);
     // Check if the server is accepting the signals from the client
     if(*lClientSoc < 0)
     {
@@ -174,7 +173,7 @@ bool ServerCom::establishCon()
     }
     else
     {
-        // cout << "Couldn't listen for connections\n";
+        cout << "Couldn't listen for connections\n";
     }
 
     return blStatus;
@@ -205,3 +204,5 @@ bool ServerCom::exceedTime(uint32 lTimeDif)
 
     return blDelayTime;
 }
+
+// EOF

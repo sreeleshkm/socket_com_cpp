@@ -29,13 +29,12 @@ class ServerCom : public SocketCom
 {
 public:
     bool startConnection(void);
-
-// private:
     bool setOption(int32 lSocDes);
     bool listenSocket(int32 lSocDes);
     bool acceptConnection(int32 lSocDes, int32* lClientSoc);
     bool establishCon();
     bool exceedTime(uint32 lTimeDif);
+
 private:
     uint32 ulPrevTime = 0;
 };

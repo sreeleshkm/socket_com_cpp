@@ -25,8 +25,6 @@
 #include <fcntl.h>
 #include "types.h"
 
-// #define SOCKET_COM SOC_SER
-
 //***************************** Global Constants *******************************
 #define SOC_CLI                 (0)
 #define SOC_SER                 (1)

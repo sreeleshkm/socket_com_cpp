@@ -149,7 +149,7 @@ int32 SocketCom::getCliSoc(uint8 ucCount)
     return glClientSocket[ucCount];
 }
 
-//******************************** setClSoc ***********************************
+//******************************** setCliSoc **********************************
 //Purpose : Set the client socket value
 //Inputs  : CliSoc
 //Outputs : Nil
