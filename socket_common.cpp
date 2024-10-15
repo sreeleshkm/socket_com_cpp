@@ -160,7 +160,7 @@ void SocketCom::setCliSoc(int32 CliSoc)
 {
     glClientSocket[ucClientCount] = CliSoc;
     ucClientCount++;
-    // std::cout << "Client count : " << ucClientCount + 48 << std::endl;
+    std::cout << "Client count : " << CliSoc + 48 << std::endl;
 }
 
 //***************************** getClientCount ********************************
