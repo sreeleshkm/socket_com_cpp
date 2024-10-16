@@ -122,7 +122,8 @@ void threadSendMsg(ServerCom *Server)
                 {
                     pucMessage[7] = ucMessage[ucMsgArPrvPos] + 48;
                     socDes = Server->getCliSoc(ucMessage[ucMsgArPrvPos]);
-                    cout << "Send Message : " << ucMessage[ucMsgArPrvPos] + 48 << " ID " << socDes + 48 << endl;
+                    cout << "Send Message : " << ucMessage[ucMsgArPrvPos] + 48;
+                    cout << " ID " << socDes + 48 << endl;
                     Server->sendMessage(&socDes, pucMessage);
                 }
 
@@ -153,17 +154,14 @@ int main()
     int32 blRcvMsgStatus = 0;
     bool blSndMsgStatus = false;
     uint8 ucRdCount = 0;
-    uint8 ucWrCount = 0;
     int32 socDes = 0;
 
 #if (SOCKET_COM == SOC_SER)
     vector <uint8> vulThreadClient {0};
     vector <thread> threads;
-    bool blMesState = false;
-    uint8 pucMessage[10] = "Recieved!";
     ServerCom Server;
 #elif (SOCKET_COM == SOC_CLI)
-    uint8 pucMessage[10] = "Hii\n";
+    uint8 pucMessage[15] = "from client\n";
     ClientCom Client;
 #endif
 
@@ -190,66 +188,52 @@ int main()
 #if (SOCKET_COM == SOC_SER)
             if (ucClientCount != ulPreClientCount)
             {
-                threads.emplace_back(threadWriteMsg, vulThreadClient[ulPreClientCount], &Server);
-                ucClientActive[ulPreClientCount] = 1;   
-                cout << "New Thread created ID : " <<  vulThreadClient[ulPreClientCount] + 48 
-                    << "act state" << ucClientActive[ulPreClientCount]  + 48 << endl;
+                threads.emplace_back(threadWriteMsg,
+                                    vulThreadClient[ulPreClientCount],
+                                    &Server);
+                ucClientActive[ulPreClientCount] = 1;
+                cout << "New Thread created ID : ";
+                cout <<  vulThreadClient[ulPreClientCount] + 48;
                 ulPreClientCount++;
                 vulThreadClient.push_back(ulPreClientCount);
             }
-
             if (ucClientActive[ucRdCount] == 1)
             {
                 socDes = Server.getCliSoc(ucRdCount);
                 blRcvMsgStatus = Server.readMessage(&socDes);
-#elif (SOCKET_COM == SOC_CLI)
-                socDes = Client.getSocketDes();
-                blRcvMsgStatus = Client.readMessage(&socDes);
-#endif
-                if (blRcvMsgStatus != 0)
-                {
-                    if (blRcvMsgStatus > 0)
-                    {
-#if (SOCKET_COM == SOC_SER)
-                        socDes = Server.getCliSoc(ucWrCount);
-                        ucWrCount++;
-                        if (ucWrCount == Server.getClientCount())
-                        {
-                            ucWrCount = 0;
-                        }
-                        cout << "Message from " << ucRdCount + 48 << " : " << Server.pucRecieveBuffer;
-                        blMesState = Server.sendMessage(&socDes, pucMessage);
-                    
-                        if (blMesState == false)
-                        {
-                            printf("Message not send\n");
-                        }
-#elif (SOCKET_COM == SOC_CLI)
-                    cout << "Message from Server : " << Client.pucRecieveBuffer;
-#endif
-                    }
-                }
-#if (SOCKET_COM == SOC_SER)
-                else
+                if (blRcvMsgStatus == 0)
                 {
                     ucClientActive[ucRdCount] = 0;
-                    cout << "Client disconnected ID : " << ucRdCount + 48 << endl;
+                    cout << "Client disconnected ID : ";
+                    cout << ucRdCount + 48 << endl;
+                }
+                else if (blRcvMsgStatus > 0)
+                {
+                    cout << "Message : " << Server.pucRecieveBuffer << endl;
                 }
             }
+
             ucRdCount++;
             if (ucRdCount == Server.getClientCount())
             {
                 ucRdCount = 0;
             }
-#endif
 
+#elif (SOCKET_COM == SOC_CLI)
+            socDes = Client.getSocketDes();
+            blRcvMsgStatus = Client.readMessage(&socDes);
+            if (blRcvMsgStatus != 0)
+            {
+                if (blRcvMsgStatus > 0)
+                {
+                    cout << "Message from Server: " << Client.pucRecieveBuffer;
+                }
+            }
 #if 0
-#if (SOCKET_COM == SOC_CLI)
             blSndMsgStatus = Client.exceedTime(SEND_MES_TIME_DIF);
 
             if (blSndMsgStatus == true)
             {
-                socDes = Client.getSocketDes();
                 Client.sendMessage(&socDes, pucMessage);
                 cout << "Send Message" << endl;
             }
