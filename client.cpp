@@ -54,31 +54,34 @@ bool ClientCom::startConnection(void)
 {
     bool blConState = false;
 
-    blConState = createSocket();
+    do
+    {
+        blConState = createSocket(); 
+        if (blConState == false)
+        {
+            cout << "Socket creation failed\n";
+            break;
+        }
 
-    if (blConState == false)
-    {
-        cout << "Socket creation failed\n";
-    }
-    else
-    {
         cout << "Socket created\n";
         blConState = bindSocket();
-
         if (blConState == false)
         {
             cout << "Couldn't bind socket\n";
+            break;
+        }
+
+        blConState = connectToSocket(getSocketDes());
+        if (blConState == false)
+        {
+            cout << "Couldn't connect socket\n";
         }
         else
         {
-            blConState = connectToSocket(getSocketDes());
-
-            if (blConState == false)
-            {
-                cout << "Couldn't connect socket\n";
-            }
+            cout << "Connected" << endl;
         }
-    }
+
+    } while (false);
 
     return blConState;
 }

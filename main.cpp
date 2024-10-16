@@ -197,10 +197,10 @@ int main()
                 ulPreClientCount++;
                 vulThreadClient.push_back(ulPreClientCount);
             }
-            socDes = Server.getCliSoc(ucRdCount);
 
             if (ucClientActive[ucRdCount] == 1)
             {
+                socDes = Server.getCliSoc(ucRdCount);
                 blRcvMsgStatus = Server.readMessage(&socDes);
 #elif (SOCKET_COM == SOC_CLI)
                 socDes = Client.getSocketDes();

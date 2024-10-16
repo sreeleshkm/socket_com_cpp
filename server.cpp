@@ -28,36 +28,35 @@ bool ServerCom::startConnection(void)
 {
     bool blConState = false;
 
-    blConState = createSocket();
-
-    if (blConState == true)
+    do
     {
+        blConState = createSocket();
+        if (blConState == false)
+        {
+            cout << "Socket creation failed\n";
+            break;
+        }
+
         cout << "Socket created\n";
 
         blConState = setOption(getSocketDes());
-
-        if (blConState == true)
+        if (blConState == false)
         {
-            blConState = bindSocket();
+            cout << "Couldn't set options\n";
+            break;
+        }
 
-            if (blConState == true)
-            {
-                cout << "Bind address\n";
-            }
-            else
-            {
-                cout << "Couldn't bind socket\n";
-            }
+        blConState = bindSocket();
+        if (blConState == false)
+        {
+            cout << "Couldn't bind socket\n";
         }
         else
         {
-            cout << "Couldn't set options\n";
+            cout << "Address binded\n";
         }
-    }
-    else
-    {
-        cout << "Socket creation failed\n";
-    }
+
+    } while (false);
 
     return blConState;
 }
@@ -154,27 +153,27 @@ bool ServerCom::establishCon()
     bool blStatus = false;
     int32 lClientSoc = 0;
 
-    blStatus = listenSocket(getSocketDes());
-
-    if (blStatus == true)
+    do
     {
-        blStatus = false;
-        blStatus = acceptConnection(getSocketDes(), &lClientSoc);
+        blStatus = listenSocket(getSocketDes());
+        if (blStatus == false)
+        {
+            cout << "Couldn't listen for connections\n";
+            break;
+        }
 
-        if (blStatus == true)
+        blStatus = acceptConnection(getSocketDes(), &lClientSoc);
+        if (blStatus == false)
+        {
+            cout << "Couldn't establish connection with client\n";
+        }
+        else
         {
             setCliSoc(lClientSoc);
             cout << "Server connected to client\n";
         }
-        else
-        {
-            cout << "Couldn't establish connection with client\n";
-        }
-    }
-    else
-    {
-        cout << "Couldn't listen for connections\n";
-    }
+
+    } while (false);
 
     return blStatus;
 }
