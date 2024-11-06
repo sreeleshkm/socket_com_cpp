@@ -7,6 +7,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # set(CMAKE_CXX_FLAGS_DEBUG -g)
 set(CMAKE_CXX_COMPILER g++)
+find_program(CPPCHECK cppcheck1)
 
 set (SOC_CLIENT 0)
 set (SOC_SERVER 1)
@@ -15,9 +16,18 @@ set (SOCKET_CO ${SOC_CLIENT})
 set (SOURCE_CLIENT main.cpp client.cpp socket_common.cpp)
 add_executable(client ${SOURCE_CLIENT})
 target_compile_definitions(client PRIVATE -DSOCKET_COM=${SOCKET_CO})
+add_custom_target(
+    cppcheck1
+    COMMAND ${CPPCHECK} --enable=all ${CMAKE_CURRENT_SOURCE_DIR}/${SOURCE_CLIENT}
+    COMMENT "Running CppCheck.."
+)
 
 set (SOCKET_CO ${SOC_SERVER})
-set (SOURCE_SERVER main.cpp server.cpp socket_common.cpp)
+set (SOURCE_SERVER server.cpp main.cpp socket_common.cpp)
 add_executable(server ${SOURCE_SERVER})
 target_compile_definitions(server PRIVATE -DSOCKET_COM=${SOCKET_CO})
-
+add_custom_target(
+    cppcheck
+    COMMAND ${CPPCHECK} --enable=all ${CMAKE_CURRENT_SOURCE_DIR}/${SOURCE_SERVER}
+    COMMENT "Running CppCheck.."
+)

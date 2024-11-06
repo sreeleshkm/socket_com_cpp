@@ -30,7 +30,6 @@ using namespace std;
 //***************************** Local Constants *******************************
 #define CLIENT_MAX_COUNT 20
 
-
 //***************************** Local Variables *******************************
 #if (SOCKET_COM == SOC_SER)
 uint8 ucMessage[10] = {0};
@@ -197,6 +196,7 @@ int main()
                 ulPreClientCount++;
                 vulThreadClient.push_back(ulPreClientCount);
             }
+
             if (ucClientActive[ucRdCount] == 1)
             {
                 socDes = Server.getCliSoc(ucRdCount);
