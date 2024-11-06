@@ -20,6 +20,7 @@
 
 #if (SOCKET_COM == SOC_SER)
 #include "server.h"
+#include <queue>
 #elif (SOCKET_COM == SOC_CLI)
 #include "client.h"
 #endif
@@ -32,7 +33,7 @@ using namespace std;
 
 //***************************** Local Variables *******************************
 #if (SOCKET_COM == SOC_SER)
-uint8 ucMessage[10] = {0};
+queue<uint8> ucMessage;
 uint8 ucMsgArCurPos = 0;
 uint8 ucMsgArPrvPos = 0;
 uint8 ucClientCount = 0;
@@ -83,7 +84,7 @@ void threadWriteMsg(uint8 ucClientID, ServerCom *Server)
         {
             if (sem.try_acquire_for(chrono::seconds(1)))
             {
-                ucMessage[ucMsgArCurPos] = ucClientID;
+                ucMessage.push(ucClientID);
                 ucMsgArCurPos++;
 
                 if (ucMsgArCurPos == 10)
@@ -117,13 +118,14 @@ void threadSendMsg(ServerCom *Server)
         {
             if (sem.try_acquire_for(chrono::seconds(1)))
             {
-                if (ucClientActive[ucMessage[ucMsgArPrvPos]] == 1)
+                if (!ucMessage.empty())
                 {
-                    pucMessage[7] = ucMessage[ucMsgArPrvPos] + 48;
-                    socDes = Server->getCliSoc(ucMessage[ucMsgArPrvPos]);
-                    cout << "Send Message : " << ucMessage[ucMsgArPrvPos] + 48;
+                    pucMessage[7] = ucMessage.front() + 48;
+                    socDes = Server->getCliSoc(ucMessage.front());
+                    cout << "Send Message : " << ucMessage.front() + 48;
                     cout << " ID " << socDes + 48 << endl;
                     Server->sendMessage(&socDes, pucMessage);
+                    ucMessage.pop();
                 }
 
                 ucMsgArPrvPos++;
